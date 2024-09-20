@@ -7,6 +7,6 @@ audio-recorder-streamlit
 requests
 Cohere
 pypdf
-chromadb==0.3.21
+chromadb
 protobuf==3.20.0
 pysqlite3-binary
