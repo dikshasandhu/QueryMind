@@ -1,0 +1,9 @@
+streamlit
+streamlit-chat
+langchain
+langchain-cohere
+langchain-community
+audio-recorder-streamlit
+requests
+Cohere
+Chroma
