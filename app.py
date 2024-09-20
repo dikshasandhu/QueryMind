@@ -19,7 +19,7 @@ os.environ['API_KEY'] = "b1afee3b-c36c-4abf-8c35-5aeec8cba897"
 # Document Preprocessing
 @st.cache_data
 def doc_preprocessing():
-    loader = PyPDFLoader(')
+    loader = PyPDFLoader("iesc111.pdf")
     docs = loader.load()
     text_splitter = CharacterTextSplitter(
         chunk_size=1000, 
