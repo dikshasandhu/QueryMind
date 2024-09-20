@@ -12,7 +12,9 @@ from langchain_cohere import CohereEmbeddings, ChatCohere
 from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.agents import initialize_agent, Tool, AgentType
-
+import(‘pysqlite3’)
+import sys
+sys.modules[‘sqlite3’] = sys.modules.pop(‘pysqlite3’)
 os.environ["COHERE_API_KEY"] = 'Ox97SolGnL68xrDjbNAMiVaWCqZ5Fny3d7hYAub6'
 os.environ['API_KEY'] = "b1afee3b-c36c-4abf-8c35-5aeec8cba897"
 
