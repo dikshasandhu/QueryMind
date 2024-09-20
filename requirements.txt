@@ -10,4 +10,4 @@ pypdf
 chromadb
 protobuf==3.20.0
 pysqlite3-binary
-hnswlib
+hnswlib>=0.7.0
