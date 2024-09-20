@@ -9,4 +9,4 @@ Cohere
 pypdf
 protobuf==3.20.0
 pysqlite3-binary
-hnswlib>=0.7.0
+chroma-hnswlib
