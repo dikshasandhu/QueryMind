@@ -58,6 +58,8 @@ def rag_qa_chain():
     )
 
 # Audio transcription using Sarvam API
+from googletrans import Translator
+
 def transcribe_audio(audio_file_path):
     with open(audio_file_path, 'rb') as audio_file:
         files = {
@@ -66,7 +68,6 @@ def transcribe_audio(audio_file_path):
         data = {
             'prompt': '<string>',
             'model': 'saaras:v1',
-            'target_lang': 'english'  # 👈 force translation to English
         }
         url = "https://api.sarvam.ai/speech-to-text-translate"
         headers = {
@@ -77,12 +78,17 @@ def transcribe_audio(audio_file_path):
 
         try:
             data = response.json()
-            if "transcript" in data:
-                return data["transcript"]
-            else:
-                raise ValueError(f"No 'transcript' key in response: {data}")
+            transcript = data.get("transcript", "")
+
+            # Translate to English if not already in English
+            translator = Translator()
+            translation = translator.translate(transcript, dest='en')
+
+            return translation.text
+
         except Exception as e:
-            raise RuntimeError(f"Error during transcription: {e}\nRaw response: {response.text}")
+            raise RuntimeError(f"Error during transcription or translation: {e}\nRaw response: {response.text}")
+
 
 
 
