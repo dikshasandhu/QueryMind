@@ -65,7 +65,8 @@ def transcribe_audio(audio_file_path):
         }
         data = {
             'prompt': '<string>',
-            'model': 'saaras:v1'
+            'model': 'saaras:v1',
+            'target_lang': 'en'  # 👈 force translation to English
         }
         url = "https://api.sarvam.ai/speech-to-text-translate"
         headers = {
@@ -82,6 +83,7 @@ def transcribe_audio(audio_file_path):
                 raise ValueError(f"No 'transcript' key in response: {data}")
         except Exception as e:
             raise RuntimeError(f"Error during transcription: {e}\nRaw response: {response.text}")
+
 
 
 # Display conversation history
