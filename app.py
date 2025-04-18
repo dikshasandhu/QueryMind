@@ -77,7 +77,8 @@ def rag_agent():
         tools=[rag_tool],
         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
         llm=ChatCohere(),
-        verbose=True
+        verbose=True,
+    handle_parsing_errors=True
     )
 
     return agent
