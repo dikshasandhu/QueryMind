@@ -66,7 +66,7 @@ def transcribe_audio(audio_file_path):
         data = {
             'prompt': '<string>',
             'model': 'saaras:v1',
-            'target_lang': 'en'  # 👈 force translation to English
+            'target_lang': 'english'  # 👈 force translation to English
         }
         url = "https://api.sarvam.ai/speech-to-text-translate"
         headers = {
