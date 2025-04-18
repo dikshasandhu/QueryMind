@@ -3,9 +3,6 @@ import streamlit as st
 from streamlit_chat import message
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-import requests
-from audio_recorder_streamlit import audio_recorder
-import json
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_cohere import CohereEmbeddings, ChatCohere
@@ -18,7 +15,6 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 # Environment variables
 os.environ["COHERE_API_KEY"] = 'Ox97SolGnL68xrDjbNAMiVaWCqZ5Fny3d7hYAub6'
-os.environ['API_KEY'] = "b1afee3b-c36c-4abf-8c35-5aeec8cba897"
 
 # Document Preprocessing
 @st.cache_data
@@ -57,41 +53,6 @@ def rag_qa_chain():
         retriever=retriever
     )
 
-# Audio transcription using Sarvam API
-from googletrans import Translator
-
-def transcribe_audio(audio_file_path):
-    with open(audio_file_path, 'rb') as audio_file:
-        files = {
-            'file': ('test.wav', audio_file, 'audio/wav'),
-        }
-        data = {
-            'prompt': '<string>',
-            'model': 'saaras:v1',
-        }
-        url = "https://api.sarvam.ai/speech-to-text-translate"
-        headers = {
-            "API-Subscription-Key": os.environ['API_KEY'],
-        }
-
-        response = requests.post(url, files=files, data=data, headers=headers)
-
-        try:
-            data = response.json()
-            transcript = data.get("transcript", "")
-
-            # Translate to English if not already in English
-            translator = Translator()
-            translation = translator.translate(transcript, dest='en')
-
-            return translation.text
-
-        except Exception as e:
-            raise RuntimeError(f"Error during transcription or translation: {e}\nRaw response: {response.text}")
-
-
-
-
 # Display conversation history
 def display_conversation(history):
     for i in range(len(history["generated"])):
@@ -100,7 +61,7 @@ def display_conversation(history):
 
 # Main function
 def main_f():
-    st.title("LLM Powered Chatbot with Audio Input (Tool-Free)")
+    st.title("LLM Powered Chatbot (Text Input Only)")
 
     # Initialize chains
     rag_chain = rag_qa_chain()
@@ -112,29 +73,17 @@ def main_f():
     if "past" not in st.session_state:
         st.session_state["past"] = ["Hey there!"]
 
-    # Record audio
-    audio_bytes = audio_recorder()
+    # Text input
+    user_query = st.text_input("Ask your question:")
 
-    if audio_bytes:
-        st.audio(audio_bytes, format="audio/wav")
-        audio_file_path = "recorded_audio.wav"
-        with open(audio_file_path, "wb") as f:
-            f.write(audio_bytes)
-        st.success("Audio recorded and saved.")
-
-        # Transcribe
-        with st.spinner("Transcribing..."):
-            transcribed_text = transcribe_audio(audio_file_path)
-            st.write(f"Transcribed Text: {transcribed_text}")
-
-            # Run the selected chain
+    if user_query:
+        with st.spinner("Thinking..."):
             if st.checkbox("Use Document-based QA (Simple RAG)", key="rag_toggle"):
-                output = rag_chain.run(transcribed_text)
+                output = rag_chain.run(user_query)
             else:
-                output = convo_chain({"question": transcribed_text})["answer"]
+                output = convo_chain({"question": user_query})["answer"]
 
-            # Store conversation
-            st.session_state.past.append(transcribed_text)
+            st.session_state.past.append(user_query)
             st.session_state.generated.append(output)
 
     # Display chat
