@@ -60,11 +60,29 @@ def rag_qa_chain():
 # Audio transcription using Sarvam API
 def transcribe_audio(audio_file_path):
     with open(audio_file_path, 'rb') as audio_file:
-        files = {'file': ('test.wav', audio_file, 'audio/wav')}
-        data = {'prompt': '<string>', 'model': 'saaras:v1'}
-        headers = {"API-Subscription-Key": os.environ['API_KEY']}
-        response = requests.post("https://api.sarvam.ai/speech-to-text-translate", files=files, data=data, headers=headers)
-        return json.loads(response.text)["transcript"]
+        files = {
+            'file': ('test.wav', audio_file, 'audio/wav'),
+        }
+        data = {
+            'prompt': '<string>',
+            'model': 'saaras:v1'
+        }
+        url = "https://api.sarvam.ai/speech-to-text-translate"
+        headers = {
+            "API-Subscription-Key": os.environ['API_KEY'],
+        }
+
+        response = requests.post(url, files=files, data=data, headers=headers)
+
+        try:
+            data = response.json()
+            if "transcript" in data:
+                return data["transcript"]
+            else:
+                raise ValueError(f"No 'transcript' key in response: {data}")
+        except Exception as e:
+            raise RuntimeError(f"Error during transcription: {e}\nRaw response: {response.text}")
+
 
 # Display conversation history
 def display_conversation(history):
